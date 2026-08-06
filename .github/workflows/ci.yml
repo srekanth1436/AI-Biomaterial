@@ -7,33 +7,56 @@ on:
     branches: [ main, master ]
 
 jobs:
-  backend-tests:
+  build-test-and-verify:
+    name: Complete System Build & E2E Testing Suite
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.12 Environment
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
-          pip install pytest pytest-asyncio anyio httpx
-      - name: Run Tests
-        run: |
-          pytest backend/test_api.py
 
-  frontend-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Node.js 22
+      - name: Set up Node.js 22 Environment
         uses: actions/setup-node@v3
         with:
           node-version: '22'
-      - name: Build Web App
+
+      - name: Install Python & Node Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install openpyxl httpx pandas scikit-learn xgboost reportlab pydantic pydantic-settings fastapi uvicorn sqlalchemy alembic pymysql cryptography python-jose passlib python-multipart pytest pytest-asyncio anyio
+
+      - name: Run Backend Pytest API Suite
+        run: |
+          pytest backend/test_api.py
+
+      - name: Build Web Frontend Application
         run: |
           cd frontend-web
           npm install
           npm run build
+          cd ..
+
+      - name: Generate All 300 Test Cases & Security Excel Reports
+        run: |
+          python generate_master_300_excel.py
+          python selenium-tests/generate_300_test_excel.py
+          python appium-tests/generate_300_appium_excel.py
+          python generate_security_excels.py
+
+      - name: Upload All Test Excel Artifacts Bundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: All-300-Test-Cases-Excel-Reports-Bundle
+          path: |
+            AI_Biomaterial_Master_E2E_Test_Report_300_Cases.xlsx
+            selenium-tests/Selenium_Login_E2E_Test_Report_300_Cases.xlsx
+            appium-tests/Appium_Mobile_App_E2E_Test_Report_300_Cases.xlsx
+            load-tests/Baseline_Load_Test_Report_100_Users.xlsx
+            Vulnerability Test Results/findings.xlsx
+            Vulnerability Test Results/endpoint-inventory.xlsx
+          retention-days: 90
