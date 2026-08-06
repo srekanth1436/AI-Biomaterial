@@ -32,7 +32,9 @@ jobs:
 
       - name: Run Backend Pytest API Suite
         run: |
-          pytest backend/test_api.py
+          cd backend
+          pytest test_api.py
+          cd ..
 
       - name: Build Web Frontend Application
         run: |
