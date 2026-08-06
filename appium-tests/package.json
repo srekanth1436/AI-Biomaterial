@@ -1,0 +1,12 @@
+{
+  "name": "appium-tests",
+  "version": "1.0.0",
+  "description": "Appium Mobile E2E Test Automation Suite for Natural Biomaterial Composite Predictor App",
+  "main": "appium-mobile-tests.js",
+  "scripts": {
+    "test": "node appium-mobile-tests.js"
+  },
+  "dependencies": {
+    "webdriverio": "^8.24.0"
+  }
+}
