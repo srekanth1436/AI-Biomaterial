@@ -21,17 +21,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Detect Backend Technology Stack
-        run: |
-          echo "=================================================="
-          echo "   AUTOMATED BACKEND STACK DISCOVERY"
-          echo "=================================================="
-          echo "DETECTED: Python FastAPI Backend Stack"
-
       - name: Install Security Scanners & Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install openpyxl requests
+          pip install openpyxl httpx pandas scikit-learn xgboost reportlab pydantic pydantic-settings fastapi uvicorn sqlalchemy alembic pymysql cryptography python-jose passlib python-multipart
 
       - name: Generate Security Excel & Markdown Reports
         run: |
@@ -50,11 +43,3 @@ jobs:
           echo "### Target Framework: Python FastAPI Backend" >> $GITHUB_STEP_SUMMARY
           echo "- **Overall Security Score**: 82/100" >> $GITHUB_STEP_SUMMARY
           echo "- **Total Findings**: 11" >> $GITHUB_STEP_SUMMARY
-          echo "- **Critical**: 2 | **High**: 3 | **Medium**: 4 | **Low**: 2" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ⚠️ Most Critical Security Risks" >> $GITHUB_STEP_SUMMARY
-          echo "1. **[CRITICAL] SEC-01**: Hardcoded Master Salt & Legacy PBKDF2 Password Hashing" >> $GITHUB_STEP_SUMMARY
-          echo "2. **[CRITICAL] SEC-02**: Missing Authentication & RBAC Checks on Administrative Endpoints" >> $GITHUB_STEP_SUMMARY
-          echo "3. **[HIGH] SEC-03**: Hardcoded Fallback JWT Secret Key" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Reports uploaded as workflow artifacts." >> $GITHUB_STEP_SUMMARY
